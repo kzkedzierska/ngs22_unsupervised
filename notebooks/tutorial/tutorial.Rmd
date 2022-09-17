@@ -1,7 +1,7 @@
 ---
 title: "NGSchool unsupervised learning: TCGA Breast Cancer data"
 subtitle: "Workshop @ NGSchool20202, Jablonna, Poland"
-date: "Created on 16 Sep, 2022 <br>Last compiled on `r format(Sys.time(), '%d %b, %Y')`"
+date: "Taught on 17 Sep, 2022 <br>Last compiled on `r format(Sys.time(), '%d %b, %Y')`"
 author: "Kasia and Kaspar"
 output: 
   learnr::tutorial:
@@ -792,3 +792,5 @@ ComplexHeatmap::Heatmap(subset_mat, name = "TCGA BRCA\nexpression",
 ```
 
 `r emo::ji("thinking_face")` Is it easier to decide how many clusters there are in the data looking at the Heatmap or in the PCA space?
+
+`r emo::ji("thinking_face")` By default `ComplexHeatmap` uses euclidean distance for clustering. Is there a more fitting distance for expression data?

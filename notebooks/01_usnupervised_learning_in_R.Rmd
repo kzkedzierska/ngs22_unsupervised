@@ -1,7 +1,8 @@
 ---
 title: "Unsupervised learning in R"
 subtitle: "Using the penguins data set"
-author: "Kaspar Martens & Kasia Kedzierska"
+date: "Taught on 17 Sep, 2022 <br>Last compiled on `r format(Sys.time(), '%d %b, %Y')`"
+author: "[Kaspar Martens](https://kaspar.website) & [Kasia Kedzierska](https://kasia.codes)"
 format: revealjs
 ---
 
@@ -560,12 +561,33 @@ ggplot() +
 
 ## Heatmap 
 
+```{r}
+ha_df <-
+  penguins_df %>%
+  select(penguin_id, species, island) %>%
+  column_to_rownames("penguin_id") %>%
+  .[rownames(pen_scaled_mat),] 
+ha_column <-
+  ComplexHeatmap::HeatmapAnnotation(df = ha_df, 
+                                    col = list(species = specie_cols, 
+                                               island = island_cols),
+                                    which = "column", show_legend = FALSE)
+  
+ha_row <-
+  ComplexHeatmap::HeatmapAnnotation(df = ha_df, 
+                                    col = list(species = specie_cols, 
+                                               island = island_cols),
+                                    which = "row")
+
+  
+```
 
 
 ```{r}
 #| echo: true
 ComplexHeatmap::Heatmap(as.matrix(dist_penguins),
-                        show_row_names = FALSE, show_column_names = FALSE,
+                        show_row_names = FALSE, 
+                        show_column_names = FALSE,
                         name = "Distance matrix",
                         right_annotation = ha_row, 
                         top_annotation = ha_column)
@@ -581,11 +603,22 @@ ComplexHeatmap::Heatmap(pen_scaled_mat,
                         name = "Distance matrix", 
                         right_annotation = ha_row)
 ```
-
-
+# Tutorial 
 
 ## Tutorial
 
-In this tutorial we will look at the BRCA dataset. 
+In this tutorial we will look at the BRCA dataset from [Comprehensive molecular portraits of human breast tumours](https://www.nature.com/articles/nature11412)
 
-## 
+![](./images/paper.png)
+
+## Tutorial
+
+In this tutorial we will look at the BRCA dataset from [Comprehensive molecular portraits of human breast tumours](https://www.nature.com/articles/nature11412)
+
+![](./images/paper_figure.png)
+
+## Tutorial {.smaller}
+
+![](images/tutorial_chart.png)
+
+Borrowed from [Cédric Scherer's RStudio Conf talk on Graphic Design with ggplot2](https://rstudio-conf-2022.github.io/ggplot2-graphic-design)
