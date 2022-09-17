@@ -1,0 +1,19 @@
+# CRAN
+remotes
+tidyverse
+patchwork
+ggsci
+glue
+palmerpenguins
+BiocManager
+umap
+shiny
+
+# remotes/github
+jokergoo/ComplexHeatmap
+rstudio/learnr
+rstudio/gradethis
+hadley/emo
+
+# Bioconductor
+SummarizedExperiment

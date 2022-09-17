@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+GDCdata/
+*/GDCdata
+MANIFEST.txt
+*/MANIFEST.txt
+*.nb.html
+notebooks/*/*_files/
+notebooks/01_usnupervised_learning_in_R_files
+*.html

@@ -1,0 +1,180 @@
+---
+title: "How we got BRCA data from GDC"
+output:
+  html_document:
+    theme: united
+    highlight: kate
+    df_print: paged
+---
+
+
+This is the notebook detailing how we got the data for the workshop. *DO NOT* run it in Jablonna! - the data is already generated and saved for you in the `data` directory and the notebook downloads a lot of data in order to create filtered set you need.
+
+```{r packages}
+library(TCGAbiolinks)
+library(tidyverse)
+```
+
+## Download the data from GDC
+
+Creating query - we want normalised gene expression, and for that we need to use `legacy` archive.
+
+```{r query_expression}
+query <-
+  GDCquery(project = "TCGA-BRCA",
+           data.category = "Gene expression",
+           data.type = "Gene expression quantification",
+           platform = "Illumina HiSeq", 
+           file.type  = "normalized_results",
+           experimental.strategy = "RNA-Seq",
+           legacy = TRUE)
+```
+
+Downloading and reading in the data we queried.
+
+```{r downlod_expression, warning=FALSE, message=FALSE, echo=FALSE, error=FALSE}
+GDCdownload(
+    query = query, 
+    method = "api", 
+    files.per.chunk = 10
+)
+data <- GDCprepare(query = query)
+```
+
+Extracting sample data from the experiment data. TCGA molecular information from marker paper has prefix 'paper_'. For BRCA this data comes from this paper: [doi.org/10.1016/j.ccell.2018.03.014](doi.org/10.1016/j.ccell.2018.03.014).
+
+```{r}
+sample_data_df <-
+  data@colData %>%
+  as_tibble() 
+
+sample_data_df %>% 
+  count(definition)
+```
+
+Good, only one sample per patient. 
+
+```{r}
+sample_data_df %>%
+  filter(definition == "Primary solid Tumor") %>%
+  count(patient) %>%
+  filter(n > 1)
+```
+
+Select only the `Primary solid Tumor` (the data contains also normal adjacent tissues and metastatic samples which we are not interested at the moment).
+
+```{r}
+full_df <-
+  sample_data_df %>%
+  filter(definition == "Primary solid Tumor") %>%
+  mutate(patient_id = str_extract(sample, 
+                                  "TCGA-[A-Z0-9]{2}-[A-Z0-9]{4}")) %>%
+  select(patient_id, barcode, days_to_diagnosis,
+         tissue_or_organ_of_origin, is_ffpe, ajcc_pathologic_stage, 
+         age_at_diagnosis, primary_diagnosis, race, starts_with("paper")) %>%
+  # remove the samples without assigned subtype
+  filter(!is.na(paper_BRCA_Subtype_PAM50))
+
+full_df
+```
+
+That gives us `r full_df %>% nrow()` samples. Checking if we still only have just one sample per patient.
+
+```{r}
+full_df %>% 
+  group_by(patient_id) %>%
+  filter(n() > 1)
+```
+
+Adding the ER positive status which will come in handy at the workshop.
+
+```{r downlod_clinical, warning=FALSE, message=FALSE, echo=FALSE, error=FALSE}
+er_query <- 
+  GDCquery(project = "TCGA-BRCA", 
+           data.category = "Clinical",
+           data.type = "Clinical Supplement", 
+           data.format = "BCR Biotab")
+GDCdownload(er_query)
+clinical_BCRtab_all <- GDCprepare(er_query)
+```
+
+Extracting ER status information and subsetting the sample set to only those that are either ER+ or ER-.
+
+```{r}
+er_status_df <-
+  clinical_BCRtab_all$clinical_patient_brca %>%
+  select(patient_id = bcr_patient_barcode, er_status_by_ihc) %>%
+  # subsetting the samples for only those with eithe + or - ER status
+  filter(er_status_by_ihc %in% c("Negative", "Positive"))
+
+
+full_df <-
+  full_df %>%
+  inner_join(er_status_df)
+```
+
+That gives us `r full_df %>% nrow()` samples.
+
+```{r}
+full_df %>%
+  count(er_status_by_ihc)
+```
+
+Subset for the samples with clinical data, subtype and ER status.
+
+```{r}
+brca_data <-
+  subset(data, select = rownames(data@colData) %in% full_df$barcode)
+```
+
+Extract the normalised counts from the data.
+
+```{r}
+brca_counts_mat <- SummarizedExperiment::assay(brca_data)
+```
+
+## Subset the data.
+
+First, log normalise the data.
+
+```{r}
+brca_norm_mat <- log(brca_counts_mat + 1)
+```
+
+Filter for genes that are expressed in at least 50 samples (roughly 5% of all samples).
+
+```{r}
+to_keep_expressed <- 
+  apply(brca_norm_mat, 1, function(gene_expr) sum(gene_expr > 0)) > 50
+
+brca_norm_mat <- brca_norm_mat[to_keep_expressed, ]
+```
+
+Now, since we want data that would not crash our RAMs we will further subset for most variable genes.
+
+```{r}
+gene_var <- apply(brca_norm_mat, 1, var)
+
+to_keep_variable <- gene_var > quantile(gene_var, 0.9)
+
+brca_norm_mat <- brca_norm_mat[to_keep_variable,]
+```
+
+
+We end up with `r nrow(brca_norm_mat)` genes and `r ncol(brca_norm_mat)` samples.
+
+
+## Saving the data
+
+To make the data visible for the tuotrial we will save the subsetted data in the `tutorial/data` directory.
+
+```{r}
+saveRDS(brca_norm_mat, "tutorial/data/brca_norm_mat.RDS")
+```
+
+
+Save the selected clinical data with subtype and ER status information.
+
+```{r}
+write_tsv(full_df, "tutorial/data/brca_subtype_df.tsv")
+```
