@@ -1,36 +1,37 @@
 README
 ================
-[Kasia Kędzierska](https://kasia.codes/) and [Kaspar
-Märtens](https://kaspar.website/)
 
-This is a repository for the workshop and lecture on Unsupervised
-Learning as tought at [NGSchool2022: Machine Learning in Computational
+This is a repository for the workshop and lecture on **Unsupervised
+Learning** as taught at [NGSchool2022: Machine Learning in Computational
 Biology](https://ngschool.eu/ngschool2022/) on 16-17.09 in Jablonna,
 Poland.
+
+Authors: [Kasia Kędzierska](https://kasia.codes/) and [Kaspar
+Märtens](https://kaspar.website/)
 
 ## Tutors
 
 This tutorial, together with a proceeding lecture \[slides can be found
-[here](TODO:add%20link)\], are jointly prepared and taught by [Kaspar
+[here](slides.pdf)\], are jointly prepared and taught by [Kaspar
 Märtens](https://kaspar.website/) and [Kasia
 Kędzierska](https://kasia.codes/). Kasia is a final year PhD student in
 Genomic Medicine and Statistics at Wellcome Centre for Human Genetics at
 the University of Oxford. Kaspar recently finished his PhD in
 Statistical Machine Learning at the University of Oxford. Since then he
 was a postdoctoral Research Fellow at the Alan Turing Institute and
-worked at Apple Health AI. Currently, he works in the Big Data Institute
+worked at Apple Health AI. Currently, he is based in the Big Data Institute
 at the University of Oxford.
 
 ## Outline
 
 We split the two 90 minutes sessions into a lecture and a workshop. In
-that space of time is quite difficult to cover the area so wast as
+that space of time is quite difficult to cover the area so vast as
 Unsupervised Learning. Our goal here was to talk about the methods,
 explain their applications and some intuitions around them. In order to
 fully understand them we would recommend exploring each method in more
 detail in the materials we link below.
 
-What we talk about?
+What do we cover/explore?
 
 -   Dimensionality reduction:
     -   Linear: PCA
@@ -103,6 +104,8 @@ The repository contains few files:
 
 ## Additional materials and further reading
 
+-   [How to explain PCA to your grandmother?](https://stats.stackexchange.com/a/140579)
+-   [Nice blog post on PCA](http://alexhwilliams.info/itsneuronalblog/2016/03/27/pca/)
 -   [Comparing UMAP and tSNE for single
     cell](https://blog.bioturing.com/2022/01/14/umap-vs-t-sne-single-cell-rna-seq-data-visualization/)
 -   [Interactive PCA visualisations on
@@ -111,6 +114,8 @@ The repository contains few files:
     data](https://www.rstudio.com/resources/rstudioconf-2018/understanding-pca-using-shiny-and-stack-overflow-data/)
 
 ### Related reading
+
+Generative art
 
 -   [Using tSNE for generative
     art](https://clauswilke.com/art/post/tsne-generative)
@@ -121,3 +126,11 @@ The repository contains few files:
     plots.”*](https://twitter.com/lpachter/status/1440695021502545934)
     and some responses: [Dmitry Kobak: *“I still think this claim is
     absurd”*](https://twitter.com/hippopedoid/status/1441029520237158407)
+
+### Various advanced topics 
+
+Here are some pointers to literature on topics that Kaspar briefly mentioned
+
+-   Modern non-linear extensions of PCA: [Variational Autoencoders](https://arxiv.org/pdf/1906.02691.pdf)
+-   Bayesian statistics [(review paper)](https://www.nature.com/articles/s43586-020-00001-2)
+-   Bayesian non-parametrics [(MLSS tutorial)](https://youtu.be/dNeW5zoNJ7g)
