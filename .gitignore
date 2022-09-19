@@ -10,3 +10,4 @@ MANIFEST.txt
 notebooks/*/*_files/
 notebooks/01_usnupervised_learning_in_R_files
 *.html
+*.log
